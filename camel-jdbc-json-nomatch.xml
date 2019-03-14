@@ -8,17 +8,10 @@
       <description>PostgresConf 2019 :: JDBC Marshalling</description>
       <from uri="jetty:http://0.0.0.0:8080/jdbcWeb/"/>
          <when>
-            <simple>${headers.q} == null</simple>
-            <setHeader headerName="q">
-                <constant>*</constant>
-            </setHeader>
-         </when>
-         <when>
             <simple>${headers.CamelHttpMethod} == "GET"</simple>
                 <setBody>
-                    <simple>SELECT * FROM post_data WHERE post_data ~* '.${headers.q}.'</simple>
+                    <simple>SELECT * FROM post_data</simple>
                 </setBody>
-                <to uri="log:jdbcLog?level=INFO" />
                 <to uri="jdbc:postgres-ds"/>
                 <marshal ref="jack"/>
          </when>
