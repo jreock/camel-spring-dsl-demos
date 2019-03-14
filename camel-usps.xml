@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+    <camelContext autoStartup="true" xmlns="http://camel.apache.org/schema/blueprint" id="usps">
+        <route>
+            <from uri="timer:myTimer?fixedRate=true&amp;period=3600000" />
+            <to uri="http://production.shippingapis.com/ShippingApi.dll?API=TrackV2&amp;XML=%3CTrackFieldRequest%20USERID=%22906JRTEC2758%22%3E%3CTrackID%20ID=%229405510899638005824389%22%3E%3C/TrackID%3E%3C/TrackFieldRequest%3E"/>
+            <convertBodyTo type="java.lang.String" />
+            <setBody>
+               <xpath>/TrackResponse/TrackInfo[@ID="9405510899638005824389"]/TrackSummary/EventDate/text()</xpath>
+            </setBody>
+            <to uri="log:myLog?level=INFO&amp;showHeaders=true" />
+            <when>
+              <simple>${body} != 'December 6, 2017'</simple>
+              <!-- <toD uri="https://api.txtlocal.com/send/?apikey=U7X8WtClQCs-PGKvd3yAfEFIjnuxD2vGbLYnU0Aft6&amp;numbers=17705958078&amp;sender=Justin&amp;message=New%20USPS%20Date-${body}&amp;test=true"/> -->
+              <toD uri="https://api.clockworksms.com/http/send.aspx?key=bb5b8cde3cc8d6a78f126f55a27e62ccba8c3b56&amp;to=17705958078&amp;content=New%20USPS%20Date-${body}&amp;test=true"/>
+              <convertBodyTo type="java.lang.String" />
+              <to uri="log:myLog?level=INFO" />
+              </when>
+        </route>
+    </camelContext>
+
+</blueprint>

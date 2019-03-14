@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+  <camelContext autoStart="true" xmlns="http://camel.apache.org/schema/blueprint" id="JDBCJSONDemo">
+    <dataFormats>
+      <json id="jack" library="Jackson"/>
+    </dataFormats>
+    <route>
+      <description>PostgresConf 2019 :: JDBC Marshalling</description>
+      <from uri="jetty:http://0.0.0.0:8080/jdbcWeb"/>
+      <choice>
+         <when>
+            <simple>${headers.CamelHttpMethod} == "GET"</simple>
+                <setBody>
+                    <constant>SELECT * FROM post_data</constant>
+                </setBody>
+                <to uri="jdbc:postgres-ds"/>
+                <marshal ref="jack"/>
+         </when>
+         <when>
+             <simple>${headers.CamelHttpMethod} == "POST"</simple>
+                <setBody>
+                     <simple>INSERT INTO post_data VALUES ('${date:now:yyyy-MM-dd'T'HH:mm:ss.SSSZ}','${body}')</simple>
+                </setBody>
+         </when>
+      </choice>
+    </route>
+  </camelContext>
+  <bean id="postgres-ds" class="org.postgresql.ds.PGPoolingDataSource" destroy-method="close">
+    <property name="serverName" value="192.168.40.125"/>
+    <property name="databaseName" value="cameljdbcdemo"/>
+    <property name="portNumber" value="5432"/>
+    <property name="user" value="camel"/>
+    <property name="password" value="camel"/>
+    <property name="dataSourceName" value="postgres"/>
+    <property name="initialConnections" value="1"/>
+    <property name="maxConnections" value="10"/>
+  </bean>
+</blueprint>

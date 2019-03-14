@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+  <bean id="demoBean" class="com.roguewave.demos.camel.demoBean.DemoBean" />
+  <camelContext autoStartup="true" xmlns="http://camel.apache.org/schema/blueprint" id="demoBeanRoute">
+    <route>
+      <from uri="timer:myTimer?fixedRate=true&amp;period=10000"/>
+      <bean ref="demoBean" method="writeBody" />
+      <to uri="log:myLog?level=INFO" />
+    </route>
+  </camelContext>
+</blueprint>

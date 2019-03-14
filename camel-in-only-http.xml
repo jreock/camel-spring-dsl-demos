@@ -1,0 +1,26 @@
+<beans
+   xmlns="http://www.springframework.org/schema/beans"  
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+     http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+  
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" autoStartup="false">
+
+        <route>
+            <description>Request-Reply JMS Route</description>
+            <from uri="timer:myTimer?fixedRate=true&amp;period=10000"/>
+            <inOnly uri="http://localhost"/>
+            <convertBodyTo type="java.lang.String" />
+            <inOnly uri="log:replyLog?level=INFO&amp;showHeaders=true" />
+            <wireTap uri="direct:meanwhile" />
+        </route>
+
+        <route>
+            <from uri="direct:meanwhile" />
+            <to uri="log:meanwhileLog?level=INFO&amp;showHeaders=true"/>
+        </route>
+
+    </camelContext>
+
+</beans>

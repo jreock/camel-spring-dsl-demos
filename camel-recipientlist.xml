@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+  <camelContext autoStartup="true" xmlns="http://camel.apache.org/schema/blueprint" id="MulticastRoute">
+    <route>
+        <from uri="timer:myTimer?fixedRate=true&amp;period=10000"/>
+        <setHeader headerName="rList">
+           <constant>file:tmp/rListData,log:myLog?level=INFO,direct:rListTest</constant>
+        </setBody>
+        <recipientList>
+            <header>rList</header>
+        </recipientList>
+    </route>
+
+    <route>
+        <from uri="direct:rListTest" />
+        <to uri="log:directLog?level=INFO"/>
+    </route>
+
+  </camelContext>
+</blueprint>

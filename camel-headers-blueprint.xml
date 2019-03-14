@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint" autoStartup="false" id="simple">
+        <route>
+                <description>Example Camel Route :: Headers</description>
+                <from uri="timer:myTimer?fixedRate=true&amp;period=5000"/>
+                <setBody><constant>Nothing here...</constant></setBody>
+                <setHeader headerName="TestHeader">
+                    <constant>justin.reock@roguewave.com</constant>
+                </setHeader>
+                <to uri="log:myLog?level=INFO&amp;showHeaders=true"/>
+        </route>
+ 
+    </camelContext>
+
+</blueprint>

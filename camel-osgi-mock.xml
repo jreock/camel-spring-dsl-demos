@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+    <camelContext autoStartup="true" xmlns="http://camel.apache.org/schema/blueprint" id="simple">
+        <route>
+            <from uri="timer:simple?period=5000"/>
+            <setBody>
+                <constant>Test Body</constant>
+            </setBody>
+            <to uri="mock:initial" />
+            <multicast>
+               <pipeline>
+                  <setBody><constant>Multicast 1</constant></setBody>
+                  <to uri="mock:Multicast1" />
+               </pipeline>
+               <pipeline>
+                  <setHeader headerName="testHeader">
+                     <constant>TestHeader</constant>
+                  </setHeader>
+                  <to uri="mock:Multicast2" />
+               </pipeline>
+            </multicast>    
+            <to uri="mock:final"/>
+        </route>
+    </camelContext>
+
+</blueprint>

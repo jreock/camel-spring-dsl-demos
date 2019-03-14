@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+  <camelContext autoStart="true" xmlns="http://camel.apache.org/schema/blueprint" id="JDBCDemos">
+    <dataFormats>
+      <json id="jack" library="Jackson"/>
+      <xstream id="xstream" />
+    </dataFormats>
+    <route>
+      <description>Example Camel Route :: Marshalling</description>
+      <from uri="timer:myTimer?fixedRate=true&amp;period=30000"/>
+      <!-- <from uri="jetty:http://0.0.0.0:8383/jdbcWeb" /> -->
+      <setBody>
+        <constant>SELECT * FROM test_data</constant>
+      </setBody>
+      <to uri="jdbc:postgres-ds"/>
+      <marshal ref="xstream"/>
+      <to uri="log:jdbcLog?level=INFO&amp;showHeaders=true"/>
+      <unmarshal ref="xstream"/>
+      <to uri="log:jdbcLog?level=INFO&amp;showHeaders=true"/>
+    </route>
+  </camelContext>
+  <bean id="postgres-ds" class="org.postgresql.ds.PGPoolingDataSource" destroy-method="close">
+    <property name="serverName" value="localhost"/>
+    <property name="databaseName" value="camel_jdbc_demo"/>
+    <property name="portNumber" value="0"/>
+    <property name="user" value="postgres"/>
+    <property name="password" value="postgres"/>
+    <property name="dataSourceName" value="postgres"/>
+    <property name="initialConnections" value="1"/>
+    <property name="maxConnections" value="10"/>
+  </bean>
+</blueprint>

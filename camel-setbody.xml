@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+    <camelContext autoStartup="true" xmlns="http://camel.apache.org/schema/blueprint" id="setBody">
+        <route>
+           <from uri="timer:myTimer?fixedRate=true&amp;period=10000" />
+          
+           <setBody>
+               <simple>This message was sent at ${date:now:yy-MM-dd hh:mm:ss}</simple>
+           </setBody>
+           <to uri="log:myTimerLog?level=INFO&amp;showHeaders=true&amp;showProperties=true" />
+        </route>
+    </camelContext>
+
+</blueprint>

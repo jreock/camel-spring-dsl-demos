@@ -1,0 +1,33 @@
+<beans
+   xmlns="http://www.springframework.org/schema/beans"  
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+     http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+  
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <description>On Call Sanitization and Notification Route</description>
+            <from uri="jetty:http://0.0.0.0:8162/jirawebhook"/>
+            <convertBodyTo type="java.lang.String" />
+            <setHeader headerName="IssueKey">
+                <jsonpath>$.issue.key</jsonpath>
+            </setHeader>
+            <setHeader headerName="Summary">
+                <jsonpath>$.issue.fields.summary</jsonpath>
+            </setHeader>
+            <setHeader headerName="Subject">
+                <simple>!! NEW TICKET !! ${headers.IssueKey}: ${headers.Summary}</simple>
+            </setHeader>
+            <setHeader headerName="contentType">
+                <constant>text/html</constant>
+            </setHeader>
+            <setBody>
+                <simple>https://ems.openlogic.com/browse/${headers.IssueKey}</simple>
+            </setBody>
+            <to uri="log:onCallAlert?level=INFO" />
+            <to uri="smtps://smtp.gmail.com:465?username=service-account@openlogic.com&amp;password=7FU5d6D2Q4m8&amp;to=justin.reock@roguewave.com"/> 
+        </route>
+    </camelContext>
+
+</beans>

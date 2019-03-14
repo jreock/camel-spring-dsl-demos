@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+  <camelContext autoStartup="true" xmlns="http://camel.apache.org/schema/blueprint" id="CamelWebService">
+    <route id="WebServiceRoute">
+       <from uri="jetty:http://0.0.0.0:8080/jmsService/" />
+       <to uri="activemq:jmsService" />
+    </route>
+  </camelContext>
+
+  <!--  <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent" >
+        <property name="connectionFactory">
+          <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+            <property name="brokerURL" value="tcp://localhost:62626"/>
+            <property name="userName" value="system"/>
+            <property name="password" value="manager"/>
+          </bean>
+        </property>
+    </bean>
+-->
+
+</blueprint>

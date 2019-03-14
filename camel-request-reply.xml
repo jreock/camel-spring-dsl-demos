@@ -1,0 +1,40 @@
+<beans
+   xmlns="http://www.springframework.org/schema/beans"  
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+     http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+  
+    <camelContext id="camel-request-reply" xmlns="http://camel.apache.org/schema/spring">
+
+        <route>
+            <description>Request-Reply JMS Route</description>
+            <from uri="timer:myTimer?fixedRate=true&amp;period=10000"/>
+            <to uri="activemq:example.B?exchangePattern=InOut"/>
+            <to uri="log:replyLog?level=INFO&amp;showHeaders=true" />
+        </route>
+<!--        <route>
+            <from uri="activemq:example.B" />
+            <to uri="log:requestLog?level=INFO&amp;showHeaders=true"/>
+            <setHeader headerName="CamelJMSDestinationName">
+               <simple>${headers.JMSReplyTo}</simple>
+            </setHeader>
+            <setBody>
+               <constant>This is my new reply message!</constant>
+            </setBody>
+        </route>
+-->
+
+    </camelContext>
+
+    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent" >
+        <property name="connectionFactory">
+          <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+            <property name="brokerURL" value="tcp://localhost:61616"/>
+            <property name="userName" value="${activemq.username}"/>
+            <property name="password" value="${activemq.password}"/>
+          </bean>
+        </property>
+    </bean>
+
+</beans>

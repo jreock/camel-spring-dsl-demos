@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <bean id="myDataSet" class="org.apache.camel.component.dataset.SimpleDataSet">
+     <property name="size" value="100000"/>
+     <property name="reportCount" value="1000"/>
+  </bean>
+
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint" autoStartup="true" id="CamelLoadTEst">
+
+    <route>
+        <description>Camel Load Test</description>
+        <from uri="dataset:myDataSet?produceDelay=2000"/>
+        <setBody><constant>Test Data</constant></setBody>
+        <to uri="activemq:topic:VirtualTopic.Demo" /> 
+    </route>
+
+  </camelContext>
+
+    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent" >
+        <property name="connectionFactory">
+          <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+            <property name="brokerURL" value="failover:(tcp://localhost:61616,tcp://localhost:61617)"/>
+            <property name="userName" value="${activemq.username}"/>
+            <property name="password" value="${activemq.password}"/>
+          </bean>
+        </property>
+    </bean>
+
+</blueprint>

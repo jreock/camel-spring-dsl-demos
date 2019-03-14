@@ -1,0 +1,19 @@
+<beans
+   xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+     http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <camelContext id="camel" autoStartup="false" xmlns="http://camel.apache.org/schema/spring">
+
+        <route>
+            <description>Example Camel Route :: Headers</description>
+            <from uri="timer:myTimer?fixedRate=true&amp;period=5000"/>
+            <setBody><constant>Nothing here...</constant></setBody>
+            <to uri="freemarker:templates/demoTemplate.txt" />
+            <to uri="log:myLog?level=INFO&amp;showHeaders=true"/>
+        </route>
+    </camelContext>
+
+</beans>

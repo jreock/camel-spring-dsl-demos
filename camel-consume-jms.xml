@@ -1,0 +1,27 @@
+<beans
+   xmlns="http://www.springframework.org/schema/beans"  
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+     http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+  
+    <camelContext id="consumeJMS" xmlns="http://camel.apache.org/schema/spring">
+
+        <route id="consumeJMSRoute">
+            <description>Example Camel Route</description>
+            <from id="activemq-jms" uri="activemq:inputJMS"/>
+            <to uri="log:myJMSLog?level=INFO&amp;showHeaders=true" />
+        </route>
+    </camelContext>
+
+    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent" >
+        <property name="connectionFactory">
+          <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+            <property name="brokerURL" value="tcp://localhost:61616"/>
+            <property name="userName" value="${activemq.username}"/>
+            <property name="password" value="${activemq.password}"/>
+          </bean>
+        </property>
+    </bean>
+
+</beans>

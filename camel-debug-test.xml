@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+  <bean id="debugBean" class="com.roguewave.demos.camel.camelDebugger.DebugBean" />
+  <camelContext autoStartup="true" xmlns="http://camel.apache.org/schema/blueprint" id="DemoBeanRoute">
+    <route id="DemoDebugRoute">
+      <from id="DebugTimer" uri="timer:myTimer?fixedRate=true&amp;period=10000"/>
+      <setHeader id="SetDemoHeader" headerName="demoHeader">
+          <constant>We can see this in a debugger!</constant>
+      </setHeader>
+      <setProperty id="SetDemoProperty"  propertyName="demoProperty">
+          <constant>And we can see this too!</constant>
+      </setProperty>
+      <bean id="DebugBean" ref="debugBean" method="debug" />
+      <!-- Let log to Debug so we dont gum up our log file -->
+      <to id="DebugLogger" uri="log:myLog?level=DEBUG" />
+    </route>
+  </camelContext>
+</blueprint>

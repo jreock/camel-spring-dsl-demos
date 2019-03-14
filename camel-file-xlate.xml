@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint" id="CamelFileXlateApp">
+    <route id="CamelFileXlateRoute">
+      <description>Example Camel Route :: FileXlate</description>
+      <from uri="file:/tmp/InputFiles" />
+      <setBody>
+         <simple>This is a message that says '${body}' that came from a filename of ${headers.CamelFileName}</simple>
+      </setBody>
+      <toD uri="activemq:FileInputQueue-${headers.CamelFileName}" />
+    </route>
+  </camelContext>
+
+    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent" >
+        <property name="connectionFactory">
+          <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+            <property name="brokerURL" value="tcp://localhost:61617"/>
+            <property name="userName" value="${activemq.username}"/>
+            <property name="password" value="${activemq.password}"/>
+          </bean>
+        </property>
+    </bean>
+
+</blueprint>

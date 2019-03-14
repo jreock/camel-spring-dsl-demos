@@ -1,0 +1,40 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+
+  <jaxrs:server id="restService"
+                address="http://localhost:8383/CxfCamelDemo/rest" 
+                staticSubresourceResolution="true">
+    <jaxrs:serviceBeans>
+      <ref bean="game"/>
+    </jaxrs:serviceBeans>       
+  </jaxrs:server>
+  
+  <bean id="game" class="com.roguewave.demos.camel.demoBean.CxfDemoBean" />
+   
+  <cxf:rsServer id="rsServer" address="http://localhost:8384/CxfCamelDemo/route"
+    serviceClass="com.roguewave.demos.camel.demoBean.CxfDemoBean" 
+    loggingFeatureEnabled="true" loggingSizeLimit="20" skipFaultLogging="true">
+  </cxf:rsServer>
+
+  <cxf:rsClient id="rsClient" address="http://localhost:8383/CxfCamelDemo/rest"
+    serviceClass="com.roguewave.demos.camel.demoBean.CxfDemoBean"
+    loggingFeatureEnabled="true" skipFaultLogging="true">
+  </cxf:rsClient>
+  
+  <camelContext id="CamelCXFDemo" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+       <from uri="cxfrs://bean://rsServer"/>
+       <to uri="log:body?level=INFO"/>
+       <to uri="cxfrs://bean://rsClient?ignoreDeleteMethodMessageBody=true&amp;synchronous=true"/>
+    </route>
+  </camelContext>
+  
+</beans>

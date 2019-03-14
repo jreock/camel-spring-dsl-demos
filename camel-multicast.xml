@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+  <camelContext autoStartup="true" xmlns="http://camel.apache.org/schema/blueprint" id="MulticastRoute">
+
+<!--     <errorHandler id="DeadLetter" type="DeadLetterChannel" deadLetterUri="file:/tmp/ErrorFiles" />
+-->
+     <route errorHandlerRef="DeadLetter">
+        <from uri="timer:myTimer?fixedRate=true&amp;period=60000"/>
+        <setBody>
+           <constant>Multicast Body</constant>
+        </setBody>
+        <multicast shareUnitOfWork="false">
+           <to uri="http://www.jksdlksdksksklklslksndclkns.com" />
+           <to uri="http://www.adsfadsfasdknsdnkasldnflasd.com" />
+           <to uri="http://wwsdflkndlsfnlsdf"/>
+           <to uri="log:endpoint1?level=WARN" />
+        </multicast>
+        <to uri="log:finalLog?level=INFO" />
+    </route>
+  </camelContext>
+</blueprint>

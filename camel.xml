@@ -1,0 +1,22 @@
+<beans
+   xmlns="http://www.springframework.org/schema/beans"  
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+     http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+  
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+        <route>
+            <description>Example Camel Route</description>
+            <from uri="jetty:http://localhost:8162/jirawebhook"/>
+            <setBody><constant>Nothing here...</constant></setBody>
+            <removeHeaders pattern="*" />
+            <setHeader headerName="To">
+                <constant>justin.reock@roguewave.com</constant>
+            </setHeader>
+            <to uri="smtps://smtp.gmail.com:465?username=justin.reock@openlogic.com&amp;password=&amp;to=justin.reock@roguewave.com"/> 
+        </route>
+    </camelContext>
+
+</beans>
