@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint" id="CamelFTPToEmail">
+    <route id="CamelFTPToEmailRoute">
+      <description>Example Camel Route :: FTP to Email</description>
+      <from uri="ftp://localhost/ftptest?username=test&amp;password=test&amp;move=.done"/>
+      <to uri="log:myLog" />
+      <setHeader headerName="contentType">
+         <constant>text/html</constant>
+      </setHeader>
+      <setHeader headerName="Subject">
+         <simple>New File Called ${headers.CamelFileName}</simple>
+      </setHeader>
+      <setHeader headerName="To">
+         <constant>test@email.com</constant>
+      </setHeader>
+      <setBody>
+         <simple>This is a file that contains '${body}'</simple>
+      </setBody>
+      <to uri="smtps://smtp.gmail.com:465?username=demoaccount@openlogic.com&amp;password=dem0dem0" />
+     </route>
+  </camelContext>
+
+</blueprint>
